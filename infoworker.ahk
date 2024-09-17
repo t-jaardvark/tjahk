@@ -1,11 +1,7 @@
 ﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
-; #Warn  ; Enable warnings to assist with detecting common errors.
+#Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
-#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
-SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
-
 
 ; Function to change case and type result
 ChangeCase(transformation) {
@@ -45,8 +41,9 @@ TypeClipboardText() {
     Clipboard := OldClipboard  ; Restore original clipboard
 }
 
+
 SetNumLockState, On
-NumLock::Return
+NumLock::Return ; numlock on all the time
 #NumPad0::#0  ;make numpad numbers equivalent to number row
 #NumPad1::#1
 #NumPad2::#2
@@ -58,7 +55,6 @@ NumLock::Return
 #NumPad8::#8
 #NumPad9::#9
 
-
 ; Hotkeys (using Notepad++ style shortcuts)
 ^u::ChangeCase("upper")       ; Ctrl+U for UPPERCASE
 ^+u::ChangeCase("lower")      ; Ctrl+Shift+U for lowercase
@@ -69,4 +65,3 @@ NumLock::Return
 ^+v::TypeClipboardText()      ; Ctrl+Shift+V to type out text-only clipboard content
 
 return
-
