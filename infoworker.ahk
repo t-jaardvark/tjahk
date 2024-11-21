@@ -1,7 +1,16 @@
 ﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
-#Warn  ; Enable warnings to assist with detecting common errors.
+#Warn All, StdOut  ; Enable warnings to assist with detecting common errors.
+#SingleInstance
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+
+SetNumLockState, On
+SetCapsLockState, AlwaysOff  ; Disable CapsLock and keep it off
+SetScrollLockState, On  ; Ensure Scroll Lock is always on
+; End of auto-execute section
+return
+
+
 
 ; Function to change case and type result
 ChangeCase(transformation) {
@@ -41,9 +50,37 @@ TypeClipboardText() {
     Clipboard := OldClipboard  ; Restore original clipboard
 }
 
+ExtractPhoneNumber() {
+    ; Save current clipboard
+    OldClipboard := ClipboardAll
+    Clipboard := ""  ; Clear clipboard
+    Send, ^c  ; Copy selected text
+    ClipWait, 2
+    if ErrorLevel
+    {
+        Clipboard := OldClipboard  ; Restore original clipboard if copy fails
+        return
+    }
 
-SetNumLockState, On
+    phone := Clipboard
+
+    ; Regex to match the format (xxx) xxx-xxxx
+    if RegExMatch(phone, "^\(\d{3}\) \d{3}-\d{4}$")
+    {
+        ; Remove everything except digits
+        phone := RegExReplace(phone, "[^\d]")
+        Clipboard := phone  ; Copy the result to clipboard
+    }
+    else
+    {
+        Clipboard := OldClipboard  ; Restore original clipboard if format doesn't match
+    }
+}
+
 NumLock::Return ; numlock on all the time
+CapsLock::Return  ; Prevent the CapsLock key from toggling
+ScrollLock::Return  ; Prevent the Scroll Lock key from toggling
+
 #NumPad0::#0  ;make numpad numbers equivalent to number row
 #NumPad1::#1
 #NumPad2::#2
@@ -55,13 +92,9 @@ NumLock::Return ; numlock on all the time
 #NumPad8::#8
 #NumPad9::#9
 
-; Hotkeys (using Notepad++ style shortcuts)
-^u::ChangeCase("upper")       ; Ctrl+U for UPPERCASE
-^+u::ChangeCase("lower")      ; Ctrl+Shift+U for lowercase
+^+u::ChangeCase("upper")      ; Ctrl+Shift+U for UPPERCASE
+^u::ChangeCase("lower")       ; Ctrl+U for lowercase
 !u::ChangeCase("sentence")    ; Alt+U for Sentence case
 ^+!u::ChangeCase("title")     ; Ctrl+Shift+Alt+U for Title Case
-
-; New hotkey for typing out text-only clipboard content
 ^+v::TypeClipboardText()      ; Ctrl+Shift+V to type out text-only clipboard content
-
-return
+#p::ExtractPhoneNumber() ; Win+P Extract Digits from phone number phone number and type digits (Win+P)
